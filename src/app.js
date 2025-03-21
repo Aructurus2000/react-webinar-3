@@ -1,14 +1,13 @@
 import React from 'react';
-import { createElement } from './utils.js';
 import './styles.css';
 
-/**
- * Приложение
- * @param store {Store} Состояние приложения
- * @returns {React.ReactElement}
- */
 function App({ store }) {
   const list = store.getState().list;
+
+  const handleItemClick = (code, event) => {
+    const isMultiSelect = event.ctrlKey || event.metaKey;
+    store.selectItem(code, isMultiSelect);
+  };
 
   return (
     <div className="App">
@@ -24,10 +23,17 @@ function App({ store }) {
             <div key={item.code} className="List-item">
               <div
                 className={'Item' + (item.selected ? ' Item_selected' : '')}
-                onClick={() => store.selectItem(item.code)}
+                onClick={event => handleItemClick(item.code, event)}
               >
                 <div className="Item-code">{item.code}</div>
-                <div className="Item-title">{item.title}</div>
+                <div className="Item-title">
+                  {item.title}
+                  {item.selected && item.selectionOrder !== null && (
+                    <div className="Item-selection-order">
+                      Порядковый номер выделения: {item.selectionOrder}
+                    </div>
+                  )}
+                </div>
                 <div className="Item-actions">
                   <button onClick={() => store.deleteItem(item.code)}>Удалить</button>
                 </div>
